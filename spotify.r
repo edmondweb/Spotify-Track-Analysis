@@ -41,6 +41,42 @@ ggplot(data, aes(x = duration_min, y = popularity)) +
 # Correlation between track duration and popularity
 cor(data$duration_min, data$popularity)
 
+
+# Song Popularity by Release Year
+  # New column for release year
+release_years <- data %>%
+  mutate(release_date = as.Date(release_date)) %>%
+  mutate(release_year = format(release_date, "%Y"))
+
+
+data$release_years <- as.numeric(release_years$release_year)
+
+# Simple Bar Graph of Average Popularity by Release Year
+ggplot(data, aes(x = release_years, y = popularity)) +
+  geom_bar(stat = "summary", fun = "mean", fill = "steelblue") +
+  labs(title = "Average Popularity by Release Year", x = "Release Year", y = "Average Popularity") +
+  theme_minimal()
+
+# Line Graph of Average Popularity by Release Year
+data %>%
+  group_by(release_years) %>%
+  summarise(avg_popularity = mean(popularity, na.rm = TRUE)) %>%
+  ggplot(aes(x = release_years, y = avg_popularity)) +
+  geom_line(color = "blue") +
+  geom_point() +
+  labs(title = "Average Song Popularity by Release Year", x = "Release Year", y = "Average Popularity") +
+  theme_minimal()
+
+
+# Distribution of Track Duration
+
+data %>%
+  ggplot(aes(x = duration_min)) +
+  geom_histogram(binwidth = 0.5, fill = "steelblue", color = "white") +
+  labs(title = "Distribution of Track Duration", x = "Duration (minutes)", y = "Count") +
+  theme_minimal()
+
+
 plot(data$duration_min, data$popularity, main = "Track Duration vs. Popularity", 
   xlab = "Duration (minutes)", ylab = "Popularity")
 
